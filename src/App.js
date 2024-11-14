@@ -8,14 +8,16 @@ import {Button} from './Button.js';
 let isX = true;
 function App() {
   
- 
-  
+  const [disabled, setDisabled] = useState('disabled');
+  const [history, setHistory] = useState([]);
     const [squares,setSquares] = useState(Array(9).fill(null));
    const [mode, setMode] = useState('light');
   
     function handleSquareClick(i) {
         const nextSquares = squares.slice();
+       
         if(CheckWinner() !==null){
+
             return;
         }
         if(nextSquares[i] != null){
@@ -28,7 +30,10 @@ function App() {
         nextSquares[i] = "O";
         }
         isX = !isX;
-        
+        const temp = history;
+        temp.push(squares);
+        setHistory(temp);
+        setDisabled('enabled');
         setSquares(nextSquares);
         CheckWinner();
        
@@ -36,6 +41,7 @@ function App() {
       }
       function helper(i,j,k){
         if(squares[i] === squares[j] && squares[j] === squares[k] && squares[i] !== null){
+
             return [i, j, k];
         }
         return null;
@@ -43,12 +49,14 @@ function App() {
       function CheckWinner(){
          
         let ans = (helper(0,1,2) || helper(3, 4, 5) || helper(6, 7, 8) || helper(0,3,6) || helper(1,4,7) || helper(2,5,8) || helper(0, 4, 8) || helper(2, 4, 6));
+
         return ans;
       }
       function restartGame(){
         const nextSquares = Array(9).fill(null);
         isX=true;
-        
+        setHistory([]);
+        setDisabled('disabled');
         setSquares(nextSquares);
         
       }
@@ -61,6 +69,22 @@ function App() {
           setMode('light');
         }
 
+      }
+      function undoMove(){
+        if(history.length === 0){
+          setDisabled('disabled');
+        }
+        else{
+          let lastChange = history[history.length - 1];
+        isX = !isX;
+        setHistory(history.slice(0,history.length-1));
+        setSquares(lastChange);
+        if(history.length === 0){
+          setDisabled('disabled');
+        }
+        }
+        
+        
       }
     return(
       <div className={"main " + mode} >
@@ -84,7 +108,7 @@ function App() {
     <Winner status = {CheckWinner()?`Winner: ${isX?'O':'X'}`:`Turn: ${isX?'X':'O'}`}/>
     <div className='button-grp'>
     <button className='btns' onClick={restartGame}>Restart</button>
-    <button className='btns'>Undo</button>
+    <button className={`btns ${(disabled==='disabled'?'disabled':'')}`} onClick={undoMove}>Undo</button>
     </div>
 
     </div>

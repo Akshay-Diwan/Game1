@@ -71,6 +71,9 @@ div{
   border: double green 2px;
   border-radius: 3px;
 }
+.btns:hover{
+  cursor:pointer;
+}
 .main{
   position: absolute;
   top: 0;
@@ -154,4 +157,11 @@ input:checked + .slider:before {
 
 button .answers{
   background-color: green ;
+}
+.btns.disabled{
+  color: rgb(109, 146, 109);
+  border-color: rgb(109, 146, 109);
+}
+.btns.disabled:hover{
+  cursor: default;
 }
